@@ -1,1 +1,7 @@
 {% extends 'base.html' %}
+
+{% block admin-panel %}
+    <a href="" class="btn btn-success">Create</a>
+    <a href="{{admin_object.get_update_url }}" class="btn btn-light edit" style="{% if admin_object %}display: inline;{% endif %}">Edit</a>
+    <a href="{{admin_object.get_delete_url}}" class="btn btn-danger delete" style="{% if admin_object %}display: inline;{% endif %}">Delete</a>
+{% endblock %}

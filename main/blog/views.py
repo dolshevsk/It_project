@@ -41,17 +41,11 @@ def posts_list(request):
     }
     return render(request, 'blog/index.html', context=context)
 
-"""def post_detail(request, slug):
-    post = Post.objects.get(slug__iexact=slug)
-    return render(request, 'blog/post_detail.html', context={'post':post})"""
 
 class PostDetail(ObjectDetailMixin,View):
     model = Post
     template = 'blog/post_detail.html'
-    """def get(self, request, slug):
-        #post = Post.objects.get(slug__iexact=slug)
-        post = get_object_or_404(Post, slug__iexact=slug)
-        return render(request, 'blog/post_detail.html', context={'post':post})"""
+
 
 class PostCreate(LoginRequiredMixin, View):
     raise_exception = True
@@ -76,9 +70,7 @@ def tags_list(request):
 class TagDetail(ObjectDetailMixin, View):
     model = Tag
     template = 'blog/tag_detail.html'
-    """def get(self, request, slug):
-        tag = Tag.objects.get(slug__iexact=slug)
-        return render(request, 'blog/tag_detail.html', context={'tag':tag})"""
+
 
 class TagCreate(LoginRequiredMixin, View):
     raise_exception = True

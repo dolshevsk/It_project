@@ -32,6 +32,8 @@ class Post(models.Model):
 
     def get_delete_url(self):
         return reverse('post_delete_url', kwargs={'slug':self.slug})
+    class Meta:
+        ordering = ['-date_pub']
 
 class Tag(models.Model):
     title = models.CharField(max_length=50)
@@ -48,3 +50,5 @@ class Tag(models.Model):
     
     def get_delete_url(self):
         return reverse('tag_delete_url', kwargs={'slug':self.slug})
+    class Meta:
+        ordering = ['title']

@@ -8,10 +8,32 @@ from .models import Post, Tag
 from .utils import ObjectDetailMixin
 from .forms import TagForm, PostForm
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
+
 
 def posts_list(request):
     posts = Post.objects.all()
-    return render(request, 'blog/index.html', context={'posts':posts})
+    paginator = Paginator(posts, 3)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    is_paginated = page.has_other_pages()
+    if page.has_previous():
+        prev_url = f'?page={page.previous_page_number()}'
+    else:
+        prev_url = ''
+
+    if page.has_next():
+        next_url = f'?page={page.next_page_number()}'
+    else:
+        next_url = ''
+    context = {
+        'page': page,
+        'is_paginated': is_paginated,
+        'next_url': next_url,
+        'prev_url': prev_url,
+    }
+    return render(request, 'blog/index.html', context=context)
 
 """def post_detail(request, slug):
     post = Post.objects.get(slug__iexact=slug)
@@ -25,10 +47,12 @@ class PostDetail(ObjectDetailMixin,View):
         post = get_object_or_404(Post, slug__iexact=slug)
         return render(request, 'blog/post_detail.html', context={'post':post})"""
 
-class PostCreate(View):
+class PostCreate(LoginRequiredMixin, View):
+    raise_exception = True
     def get(self, request):
         form = PostForm()
         return render(request, 'blog/post_create.html', context={'form':form})
+        
     
     def post(self, request):
         bound_form = PostForm(request.POST)
@@ -50,7 +74,8 @@ class TagDetail(ObjectDetailMixin, View):
         tag = Tag.objects.get(slug__iexact=slug)
         return render(request, 'blog/tag_detail.html', context={'tag':tag})"""
 
-class TagCreate(View):
+class TagCreate(LoginRequiredMixin, View):
+    raise_exception = True
     def get(self, request):
         form = TagForm()
         return render(request, 'blog/tag_create.html', context={'form':form})
@@ -63,7 +88,8 @@ class TagCreate(View):
             return redirect(new_tag)
         return render(request, 'blog/tag_create.html', context={'form': bound_form})
 
-class TagUpdate(View):
+class TagUpdate(LoginRequiredMixin, View):
+    raise_exception = True
     def get(self, request, slug):
         tag = Tag.objects.get(slug__iexact=slug)
         bound_form = TagForm(instance=tag)
@@ -78,7 +104,8 @@ class TagUpdate(View):
             return redirect(new_tag)
         return render(request, 'blog/tag_update.html', context={'form': bound_form, 'tag': tag})
 
-class PostUpdate(View):
+class PostUpdate(LoginRequiredMixin, View):
+    raise_exception = True
     def get(self, request, slug):
         post = Post.objects.get(slug__iexact=slug)
         bound_form = PostForm(instance=post)
@@ -93,7 +120,8 @@ class PostUpdate(View):
             return redirect(new_post)
         return render(request, 'blog/post_update.html', context={'form': bound_form, 'post': post})
 
-class TagDelete(View):
+class TagDelete(LoginRequiredMixin, View):
+    raise_exception = True
     def get(self, request, slug):
         tag = Tag.objects.get(slug__iexact=slug)
         return render(request, 'blog/tag_delete.html', context={'tag': tag})
@@ -103,7 +131,8 @@ class TagDelete(View):
         tag.delete()
         return redirect(reverse('tags_list_url'))
 
-class PostDelete(View):
+class PostDelete(LoginRequiredMixin, View):
+    raise_exception = True
     def get(self, request, slug):
         post = Post.objects.get(slug__iexact=slug)
         return render(request, 'blog/post_delete.html', context={'post': post})

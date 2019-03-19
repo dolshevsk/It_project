@@ -39,7 +39,7 @@ def posts_list(request):
         'next_url': next_url,
         'prev_url': prev_url,
     }
-    return render(request, 'blog/index.html', context=context)
+    return render(request, 'blog/index.html', context)
 
 
 class PostDetail(ObjectDetailMixin,View):

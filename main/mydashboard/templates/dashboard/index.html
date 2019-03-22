@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<style>
+    body {
+        background-color: #D0D0D0;
+        max-height: 100px;
+    }
+
+
+    .left {
+        padding-top: 100px;
+        padding-left: 350px;
+
+    }
+
+    .weather {
+        padding-top: 80px;
+        padding-left: 500px;
+
+    }
+
+    header {
+        background-color: #009973;
+        height: 70px;
+
+    }
+    .home{
+        padding-top: 0px;
+        padding-left: 20px;
+        width: 70px;
+        height: 70px;
+    }
+    a {
+    color: black;
+}
+</style>
+
+
+<body>
+    <header style="display: flex">
+        <p><a href="{% url 'post_list_url' %}"><img class="home" src="https://image.flaticon.com/icons/svg/149/149910.svg" alt="home"></a> </p>
+        <h2 style="padding-left: 1550px; padding-top: 15px; f"><a href="{% url 'logout' %}">logout</a> </h2>
+    </header>
+    <main role="main">
+        <div style="display:flex">
+            <div class="left">
+                <h1 style="padding-left: 55px">Hi, {{user}}!</h1>
+                <h2>Now: {{date}}</h2>
+                <h2 style="padding-left: 75px">{{time}}</h2>
+            </div>
+            <div class="weather">
+                <h1>Weather Minsk:</h1>
+                <h2 style="padding-left: 50px">{{weather}}<img src="http://openweathermap.org/img/w/{{icon}}.png"
+                        alt="weather"> </h2>
+                <ul style="font-size: 20px">
+                    <li>Pressure: {{pressure}} hPa</li>
+                    <li>Humidity: {{humidity}}%</li>
+                    <li>Wind speed: {{wind}} m/sec</li>
+                </ul>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="myChart" width="1700" height="440"></canvas>
+        </div>
+
+    </main>
+    <footer class="footer">
+        <div class="graph">
+            <script>
+                var ctx = document.getElementById('myChart');
+                Chart.defaults.global.defaultFontColor = 'black';
+                Chart.defaults.global.defaultFontSize = 15;
+                var myLineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: {{ data_time }},
+                datasets: [{
+                    label: 'temperature °C',
+                    data: {{ data_graph }},
+                    backgroundColor: [
+                    'rgba(255, 99, 100, 0.5)',
+                ],
+                    borderWidth: 1,
+                    borderColor: '#777',
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: '#000',
+                    lineTension: 0.1,
+                    borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                ],
+                    borderWidth: 0.1
+        }, {
+                    label: 'wind speed m/sec',
+                    data: {{ data_graph_wind }},
+                    type: 'line',
+                    backgroundColor: [
+                    'rgba(54, 162, 235, 0.5)'
+                ],
+                    lineTension: 0.1,
+                    borderWidth: 0.5,         
+
+        }]
+            },
+                options: {
+                    responsive: false,
+                        maintainAspectRatio: false,
+                            title: {
+                        display: true,
+                            text: 'All day weather',
+            },
+                    legend: {
+                        position: 'right',
+                            labels: {
+                            fontColor: 'black',
+                    }
+                    },
+                    layout: {
+                        padding: {
+                            left: 150,
+                                top: 10,
+                }
+                    },
+                }
+        });
+            </script>
+        </div>
+    </footer>
+</body>
+
+</html>

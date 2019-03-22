@@ -11,7 +11,8 @@ from .forms import TagForm, PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
-
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
 
 def posts_list(request):
     search_query = request.GET.get('search', '')
@@ -20,7 +21,7 @@ def posts_list(request):
     else:
         posts = Post.objects.all()
     
-    paginator = Paginator(posts, 3)
+    paginator = Paginator(posts, 2)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
     is_paginated = page.has_other_pages()
@@ -46,8 +47,8 @@ class PostDetail(ObjectDetailMixin,View):
     model = Post
     template = 'blog/post_detail.html'
 
-
-class PostCreate(LoginRequiredMixin, View):
+@method_decorator(staff_member_required(login_url='post_list_url'), name='dispatch')
+class PostCreate(View):
     raise_exception = True
     def get(self, request):
         form = PostForm()
@@ -71,8 +72,8 @@ class TagDetail(ObjectDetailMixin, View):
     model = Tag
     template = 'blog/tag_detail.html'
 
-
-class TagCreate(LoginRequiredMixin, View):
+@method_decorator(staff_member_required(login_url='tags_list_url'), name='dispatch')
+class TagCreate(View):
     raise_exception = True
     def get(self, request):
         form = TagForm()
@@ -86,7 +87,8 @@ class TagCreate(LoginRequiredMixin, View):
             return redirect(new_tag)
         return render(request, 'blog/tag_create.html', context={'form': bound_form})
 
-class TagUpdate(LoginRequiredMixin, View):
+@method_decorator(staff_member_required(login_url='tags_list_url'), name='dispatch')
+class TagUpdate(View):
     raise_exception = True
     def get(self, request, slug):
         tag = Tag.objects.get(slug__iexact=slug)
@@ -102,7 +104,8 @@ class TagUpdate(LoginRequiredMixin, View):
             return redirect(new_tag)
         return render(request, 'blog/tag_update.html', context={'form': bound_form, 'tag': tag})
 
-class PostUpdate(LoginRequiredMixin, View):
+@method_decorator(staff_member_required(login_url='post_list_url'), name='dispatch')
+class PostUpdate(View):
     raise_exception = True
     def get(self, request, slug):
         post = Post.objects.get(slug__iexact=slug)
@@ -118,7 +121,8 @@ class PostUpdate(LoginRequiredMixin, View):
             return redirect(new_post)
         return render(request, 'blog/post_update.html', context={'form': bound_form, 'post': post})
 
-class TagDelete(LoginRequiredMixin, View):
+@method_decorator(staff_member_required(login_url='tags_list_url'), name='dispatch')
+class TagDelete(View):
     raise_exception = True
     def get(self, request, slug):
         tag = Tag.objects.get(slug__iexact=slug)
@@ -129,7 +133,8 @@ class TagDelete(LoginRequiredMixin, View):
         tag.delete()
         return redirect(reverse('tags_list_url'))
 
-class PostDelete(LoginRequiredMixin, View):
+@method_decorator(staff_member_required(login_url='post_list_url'), name='dispatch')
+class PostDelete(View):
     raise_exception = True
     def get(self, request, slug):
         post = Post.objects.get(slug__iexact=slug)

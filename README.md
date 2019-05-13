@@ -1,2 +1,2 @@
-# It_project
+# django project for it-academy
 final project
